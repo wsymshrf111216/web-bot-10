@@ -1,0 +1,20 @@
+const { EmbedBuilder } = require('discord.js')
+const Client = require('..')
+
+Client.on('guildDelete', async Guild => {
+	    const Channel = Client.channels.cache.get('1106299629613613066')
+        if(!Channel) return;
+        const Roles = await Guild.roles.cache.map((Role) => `${Role}`).join(', ')
+        const Embed = new EmbedBuilder()
+            .setColor('Random')
+            .setAuthor({ name: Guild.name, iconURL: Guild.iconURL() })
+            .setThumbnail(Guild.iconURL())
+            .addFields({ name: 'Server Name', value: `${Guild.name}`, inline: true })
+            .addFields({ name: 'Server ID', value: `${Guild.id}`, inline: true })
+            .addFields({ name: 'CreatedOn', value: `**<t:${parseInt(Guild.createdAt / 1000)}:R>**`, inline: true })
+            .addFields({ name: 'Server Owner', value: `<@${Guild.ownerId}>`, inline: true })
+            .addFields({ name: `Members (${Guild.members.cache.size})`, value: `**${Guild.members.cache.filter((Member) => ['dnd', 'idle', 'online'].includes(Member.presence?.status)).size}** Online\n**${Guild.premiumSubscriptionCount}** Boots`, inline: true })
+            .addFields({ name: `Channels (${Guild.channels.cache.size})`, value: `**${Guild.channels.cache.filter((Channel) => Channel.type === 0).size}** Text | **${Guild.channels.cache.filter((Channel) => Channel.type === 2).size}** Voice`, inline: true })
+            .addFields({ name: `Others`, value: `**Verification Level** : ${Guild.verificationLevel}`, inline: true })
+        Channel.send({ embeds: [Embed] })
+})
